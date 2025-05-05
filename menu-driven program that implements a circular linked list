@@ -1,0 +1,152 @@
+#include<stdio.h>
+ #include<stdlib.h>
+ typedef struct node {
+     int data;
+     struct node* next;
+ } *NODE;
+ NODE createNode(int data) {
+     NODE newNode = (NODE)malloc(sizeof(struct node));
+     newNode->data = data;
+     newNode->next = NULL;
+     return newNode;
+ }
+ NODE insertAtPositionInCLL(NODE first, int pos, int data) {
+     NODE newNode = createNode(data);
+     if (pos == 1) {
+         if (first == NULL) {
+             newNode->next = newNode;
+             return newNode;
+         } else {
+             NODE last = first;
+             while (last->next != first) last = last->next;
+             newNode->next = first;
+             last->next = newNode;
+             return newNode;
+         }
+     }
+     NODE temp = first;
+     int count = 1;
+     while (count < pos - 1 && temp->next != first) {
+         temp = temp->next;
+         count++;
+     }
+     if (count != pos - 1) {
+         printf("Position not found\n");
+         free(newNode);
+         return first;
+ }
+ newNode->next = temp->next;
+ NODE deleteAtPositionInCLL(NODE first, int pos) {
+     if (first == NULL) return NULL;
+     NODE temp = first;
+     if (pos == 1) {
+         if (first->next == first) {
+             printf("Deleted element: %d\n", first->data);
+             free(first);
+             return NULL;
+         } else {
+             NODE last = first;
+             while (last->next != first) last = last->next;
+             NODE delNode = first;
+             printf("Deleted element: %d\n", delNode->data);
+             first = first->next;
+             last->next = first;
+             free(delNode);
+             return first;
+         }
+     }
+     int count = 1;
+     NODE prev = NULL;
+     while (count < pos && temp->next != first) {
+         prev = temp;
+         temp = temp->next;
+         count++;
+     }
+     if (count != pos) {
+         printf("Position not found\n");
+         return first;
+     }
+     prev->next = temp->next;
+     printf("Deleted element: %d\n", temp->data);
+     free(temp);
+     return first;
+ }
+ void traverseListInCLL(NODE first) {
+     if (first == NULL) {
+         printf("CLL is empty\n");
+         return;
+     }
+     NODE temp = first;
+     do {
+         printf("%d --> ", temp->data);
+         temp = temp->next;
+     } while (temp != first);
+     printf("\n");
+ }
+ NODE reverseCLL(NODE first) {
+     if (first == NULL || first->next == first) return first;
+ 
+     NODE prev = NULL, curr = first, nextNode;
+     NODE last = first;
+     do {
+         last = last->next;
+     } while (last->next != first);
+     NODE start = first;
+     do {
+         nextNode = curr->next;
+         curr->next = prev;
+         prev = curr;
+         curr = nextNode;
+     } while (curr != first);
+     first->next = prev;
+     return prev;
+ }
+ void main() {
+     NODE first = NULL;
+     int x, pos, op;
+     while (1) {
+         printf("1.Insert 2.Delete 3.Display 4.Reverse 5.Exit\n");
+         printf("choice: ");
+         scanf("%d", &op);
+         switch (op) {
+             case 1:
+                 printf("Position: ");
+                 scanf("%d", &pos);
+                 if (pos <= 0) {
+                     printf("Position not found\n");
+                 } else {
+                     printf("Element: ");
+                     scanf("%d", &x);
+                     first = insertAtPositionInCLL(first, pos, x);
+                 }
+                 break;
+             case 2:
+                 if (first == NULL) {
+                     printf("CLL is empty\n");
+                 } else {
+                     printf("Position: ");
+                     scanf("%d", &pos);
+                     first = deleteAtPositionInCLL(first, pos);
+                 }
+                 break;
+             case 3:
+                 if (first == NULL) {
+                     printf("CLL is empty\n");
+                 } else {
+                     printf("Elements in CLL are: ");
+                     traverseListInCLL(first);
+                 }
+                 break;
+             case 4:
+                 if (first == NULL) {
+                     printf("CLL is empty\n");
+                 } else {
+                     first = reverseCLL(first);
+                     printf("CLL reversed\n");
+                 }
+                 break;
+             case 5:
+                 exit(0);
+         }
+     }
+ }
